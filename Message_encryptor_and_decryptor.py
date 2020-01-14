@@ -27,31 +27,21 @@ if conditionToEncode.lower() == "d":
     messageSizeExtra = messageSize
     messageSplit = int(input("How many rows does the square encoding matrix have?: "))
     # This while loop just adds spaces to the end of the message to make the message and the matrix compatible
-    while messageSize % messageSplit != 0:
+    while messageSizeExtra % messageSplit != 0:
         messageSizeExtra = messageSizeExtra + 1
     # Makes the values of the matrix equal to the user input
     counter = 0
-    rowNumMessage = int(messageSize / messageSplit)
-    messageMatrix = np.empty([rowNumMessage, messageSplit], dtype='int')
-
+    rowNumMessage = int(messageSizeExtra / messageSplit)
+    # messageMatrix = np.empty([rowNumMessage, messageSplit], dtype='int')
     messageValues = input("Enter the numbers of the message, each separated by a space: ")
-    '''
-    for i in range(rowNumMessage):
-        for j in range(messageSplit):
-            counter = counter + 1
-            if counter <= messageSize:
-                valueM = int(input("Enter value number {} for the message: ".format(counter)))
-                messageMatrix[i][j] = valueM
-            if counter > messageSize:
-                messageMatrix[i][j] = 0
-    '''
+    messageMatrix = np.asarray(messageValues.split(" "), dtype='int').reshape(rowNumMessage, messageSplit)
     # End up with a messageMatrix with numbers of the message
 
 if conditionToEncode.lower() == "e":
     # Defines the message matrix (characters)
     message = input("Enter the message to encode: ")
     messageSize = len(message)
-    messageSplit = int(input("How many rows does the square encoding matrix have?(it should be a factor of the size of the message): "))
+    messageSplit = int(input("How many rows does the square encoding matrix have?: "))
     # This while loop just adds spaces to the end of the message to make the message and the matrix compatible
     while messageSize % messageSplit != 0:
         message = message + " "
@@ -63,7 +53,7 @@ if conditionToEncode.lower() == "e":
         # If the character is a space, make the number 0 instead of 32
         if char == " ":
             messageNumbers[i] = (0)
-        # Otherwise, make the number the coresponding value of the alphabet(a = 1, b = 2, c = 3...)
+        # Otherwise, make the number the corresponding value of the alphabet(a = 1, b = 2, c = 3...)
         else:
             messageNumbers[i] = (ord(char) - 96)
     rowNumMessage = int(messageSize / messageSplit)
@@ -78,22 +68,30 @@ for i in range(dimofEncMatix):
         valueE = int(input("Enter the value in row {} and column {} of the encoding matrix: ".format(i, j)))
         encodingMatrix[i][j] = valueE
 
+
+def factor(matrix):
+    meanMatrix = np.round(np.mean(matrix))
+    if meanMatrix % 2 == 0:
+        return 2
+    else:
+        return 3
+
+
 # Actual code for encrypting and decrypting
 if conditionToEncode.lower() == "e":
-    conditionToDecrypt = 0
-    meanMatrix = np.round(np.mean(encodingMatrix))
-    if meanMatrix % 2 == 0:
+    if factor(encodingMatrix) == 2:
         encodedMessage = np.dot(messageMatrix, encodingMatrix**2).reshape(messageSize)
-        conditionToDecrypt = 2
+        print("should be 2")
     else:
         encodedMessage = np.dot(messageMatrix, encodingMatrix**3).reshape(messageSize)
-        conditionToDecrypt = 3
+        print("should be 3")
     print("The encoded numbers of the message are")
     print(encodedMessage)
+decodedMessage = None
 if conditionToEncode.lower() == "d":
-    if conditionToDecrypt == 2:
+    if factor(encodingMatrix) == 2:
         decodedMessage = np.dot(messageMatrix, np.linalg.inv(encodingMatrix**2)).reshape(messageSize)
-    if conditionToDecrypt == 3:
+    if factor(encodingMatrix) == 3:
         decodedMessage = np.dot(messageMatrix, np.linalg.inv(encodingMatrix**3)).reshape(messageSize)
     print("The decoded numbers of the message are")
     decodedMessage = decodedMessage.astype(int)
@@ -105,3 +103,4 @@ if conditionToEncode.lower() == "d":
             print(chr(number + 96), end='')
         if number == 0:
             print(" ", end='')
+# TODO The message is not decyphered correctly: 'meet me monday' becomes 'mdet le lomcax'

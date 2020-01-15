@@ -16,7 +16,7 @@ def isPrime(num):
     return True
 
 
-# Makes sure that the user choses either E or D
+# Makes sure that the user chooses either E or D
 conditionToEncode = input("Would you like to encrypt(enter an E) or decrypt(enter a D) a message? ")
 while conditionToEncode.lower() != "e" and conditionToEncode.lower() != "d":
     conditionToEncode = input("Please enter either a letter E or D: ")
@@ -59,6 +59,7 @@ if conditionToEncode.lower() == "e":
     rowNumMessage = int(messageSize / messageSplit)
     messageMatrix = messageNumbers.reshape(rowNumMessage, messageSplit)
 
+
 # Defines the encoding matrix
 dimofEncMatix = messageSplit
 encodingMatrix = np.empty([dimofEncMatix, dimofEncMatix], dtype='int')
@@ -80,19 +81,27 @@ def factor(matrix):
 # Actual code for encrypting and decrypting
 if conditionToEncode.lower() == "e":
     if factor(encodingMatrix) == 2:
-        encodedMessage = np.dot(messageMatrix, encodingMatrix**2).reshape(messageSize)
+        encodedMessage = np.matmul(messageMatrix, np.linalg.matrix_power(encodingMatrix, 2)).reshape(messageSize)
         print("should be 2")
     else:
-        encodedMessage = np.dot(messageMatrix, encodingMatrix**3).reshape(messageSize)
+        encodedMessage = np.matmul(messageMatrix, np.linalg.matrix_power(encodingMatrix, 3)).reshape(messageSize)
         print("should be 3")
+
+    print("messageMatrix")
+    print(messageMatrix)
+    print(np.linalg.matrix_power(encodingMatrix, 2))
     print("The encoded numbers of the message are")
     print(encodedMessage)
 decodedMessage = None
+invEncodingMatrix = None
 if conditionToEncode.lower() == "d":
     if factor(encodingMatrix) == 2:
-        decodedMessage = np.dot(messageMatrix, np.linalg.inv(encodingMatrix**2)).reshape(messageSize)
-    if factor(encodingMatrix) == 3:
-        decodedMessage = np.dot(messageMatrix, np.linalg.inv(encodingMatrix**3)).reshape(messageSize)
+        invEncodingMatrix = np.linalg.inv(np.linalg.matrix_power(encodingMatrix, 2))
+        decodedMessage = np.matmul(messageMatrix, invEncodingMatrix).reshape(messageSize)
+    else:
+        invEncodingMatrix = np.linalg.inv(np.linalg.matrix_power(encodingMatrix, 3))
+        decodedMessage = np.matmul(messageMatrix, invEncodingMatrix).reshape(messageSize)
+    print(invEncodingMatrix)
     print("The decoded numbers of the message are")
     decodedMessage = decodedMessage.astype(int)
     print(decodedMessage)
@@ -103,4 +112,12 @@ if conditionToEncode.lower() == "d":
             print(chr(number + 96), end='')
         if number == 0:
             print(" ", end='')
-# TODO The message is not decyphered correctly: 'meet me monday' becomes 'mdet le lomcax'
+
+# TODO The error could be rounding errors
+'''
+m1 = np.array([[13, 5, 5], [20, 0, 13], [5, 0, 13], [15, 14, 4], [1, 25, 0]])
+m2 = np.array([[5, -6, -12], [1, 0, -11], [-2, 1, 15]])
+print(m1)
+print(m2)
+print(m1 @ m2)
+'''

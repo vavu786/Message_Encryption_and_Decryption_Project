@@ -2,6 +2,8 @@ import numpy as np
 import itertools
 import math
 
+np.set_printoptions(suppress=True)
+
 
 def isPrime(num):
     for i in range(2, num):
@@ -61,11 +63,10 @@ if conditionToEncode.lower() == "e":
 
 
 # Defines the encoding matrix
-dimofEncMatix = messageSplit
-encodingMatrix = np.empty([dimofEncMatix, dimofEncMatix], dtype='int')
+encodingMatrix = np.empty([messageSplit, messageSplit], dtype='int')
 # Makes the values of the matrix equal to the user input
-for i in range(dimofEncMatix):
-    for j in range(dimofEncMatix):
+for i in range(messageSplit):
+    for j in range(messageSplit):
         valueE = int(input("Enter the value in row {} and column {} of the encoding matrix: ".format(i, j)))
         encodingMatrix[i][j] = valueE
 
@@ -79,45 +80,32 @@ def factor(matrix):
 
 
 # Actual code for encrypting and decrypting
+encodedMessage = None
+
 if conditionToEncode.lower() == "e":
     if factor(encodingMatrix) == 2:
         encodedMessage = np.matmul(messageMatrix, np.linalg.matrix_power(encodingMatrix, 2)).reshape(messageSize)
-        print("should be 2")
     else:
         encodedMessage = np.matmul(messageMatrix, np.linalg.matrix_power(encodingMatrix, 3)).reshape(messageSize)
-        print("should be 3")
-
-    print("messageMatrix")
-    print(messageMatrix)
-    print(np.linalg.matrix_power(encodingMatrix, 2))
     print("The encoded numbers of the message are")
     print(encodedMessage)
+
 decodedMessage = None
 invEncodingMatrix = None
+
 if conditionToEncode.lower() == "d":
     if factor(encodingMatrix) == 2:
         invEncodingMatrix = np.linalg.inv(np.linalg.matrix_power(encodingMatrix, 2))
-        decodedMessage = np.matmul(messageMatrix, invEncodingMatrix).reshape(messageSize)
+        decodedMessage = np.around(np.matmul(messageMatrix, invEncodingMatrix).reshape(messageSize))
     else:
         invEncodingMatrix = np.linalg.inv(np.linalg.matrix_power(encodingMatrix, 3))
-        decodedMessage = np.matmul(messageMatrix, invEncodingMatrix).reshape(messageSize)
-    print(invEncodingMatrix)
+        decodedMessage = np.around(np.matmul(messageMatrix, invEncodingMatrix).reshape(messageSize))
     print("The decoded numbers of the message are")
     decodedMessage = decodedMessage.astype(int)
     print(decodedMessage)
     print("The message says: ")
-    print()
     for number in decodedMessage:
         if number != 0:
             print(chr(number + 96), end='')
         if number == 0:
             print(" ", end='')
-
-# TODO The error could be rounding errors
-'''
-m1 = np.array([[13, 5, 5], [20, 0, 13], [5, 0, 13], [15, 14, 4], [1, 25, 0]])
-m2 = np.array([[5, -6, -12], [1, 0, -11], [-2, 1, 15]])
-print(m1)
-print(m2)
-print(m1 @ m2)
-'''

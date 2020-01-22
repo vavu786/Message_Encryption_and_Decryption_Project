@@ -4,20 +4,6 @@ import math
 
 np.set_printoptions(suppress=True)
 
-
-def isPrime(num):
-    for i in range(2, num):
-        if num % i == 0:
-            # print(i)
-            # print("False")
-            return False
-        elif num == 3:
-            # print(i)
-            # print("true")
-            return True
-    return True
-
-
 # Makes sure that the user chooses either E or D
 conditionToEncode = input("Would you like to encrypt(enter an E) or decrypt(enter a D) a message? ")
 while conditionToEncode.lower() != "e" and conditionToEncode.lower() != "d":
@@ -54,7 +40,7 @@ if conditionToEncode.lower() == "e":
     for i, char in enumerate(message):
         # If the character is a space, make the number 0 instead of 32
         if char == " ":
-            messageNumbers[i] = (0)
+            messageNumbers[i] = 0
         # Otherwise, make the number the corresponding value of the alphabet(a = 1, b = 2, c = 3...)
         else:
             messageNumbers[i] = (ord(char) - 96)
@@ -109,3 +95,4 @@ if conditionToEncode.lower() == "d":
             print(chr(number + 96), end='')
         if number == 0:
             print(" ", end='')
+            

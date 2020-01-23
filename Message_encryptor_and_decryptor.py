@@ -8,12 +8,20 @@ np.set_printoptions(suppress=True)
 conditionToEncode = input("Would you like to encrypt(enter an E) or decrypt(enter a D) a message? ")
 while conditionToEncode.lower() != "e" and conditionToEncode.lower() != "d":
     conditionToEncode = input("Please enter either a letter E or D: ")
+messageSplit = int(input("How many rows does the square encoding matrix have?: "))
+
+# Defines the encoding matrix
+encodingMatrix = np.empty([messageSplit, messageSplit], dtype='int')
+# Makes the values of the matrix equal to the user input
+for i in range(messageSplit):
+    for j in range(messageSplit):
+        valueE = int(input("Enter the value in row {} and column {} of the encoding matrix: ".format(i, j)))
+        encodingMatrix[i][j] = valueE
 
 if conditionToEncode.lower() == "d":
     # Defines the message matrix
     messageSize = int(input("How many numbers are in the message?: "))
     messageSizeExtra = messageSize
-    messageSplit = int(input("How many rows does the square encoding matrix have?: "))
     # This while loop just adds spaces to the end of the message to make the message and the matrix compatible
     while messageSizeExtra % messageSplit != 0:
         messageSizeExtra = messageSizeExtra + 1
@@ -29,7 +37,6 @@ if conditionToEncode.lower() == "e":
     # Defines the message matrix (characters)
     message = input("Enter the message to encode: ")
     messageSize = len(message)
-    messageSplit = int(input("How many rows does the square encoding matrix have?: "))
     # This while loop just adds spaces to the end of the message to make the message and the matrix compatible
     while messageSize % messageSplit != 0:
         message = message + " "
@@ -43,18 +50,9 @@ if conditionToEncode.lower() == "e":
             messageNumbers[i] = 0
         # Otherwise, make the number the corresponding value of the alphabet(a = 1, b = 2, c = 3...)
         else:
-            messageNumbers[i] = (ord(char) - 96)
+            messageNumbers[i] = ((ord(char) - 96) + (encodingMatrix[0][0] % 26))
     rowNumMessage = int(messageSize / messageSplit)
     messageMatrix = messageNumbers.reshape(rowNumMessage, messageSplit)
-
-
-# Defines the encoding matrix
-encodingMatrix = np.empty([messageSplit, messageSplit], dtype='int')
-# Makes the values of the matrix equal to the user input
-for i in range(messageSplit):
-    for j in range(messageSplit):
-        valueE = int(input("Enter the value in row {} and column {} of the encoding matrix: ".format(i, j)))
-        encodingMatrix[i][j] = valueE
 
 
 def factor(matrix):
@@ -88,11 +86,14 @@ if conditionToEncode.lower() == "d":
         decodedMessage = np.around(np.matmul(messageMatrix, invEncodingMatrix).reshape(messageSize))
     print("The decoded numbers of the message are")
     decodedMessage = decodedMessage.astype(int)
+    for i in range(messageSize):
+        if decodedMessage[i] != 0:
+            decodedMessage[i] = decodedMessage[i] - (encodingMatrix[0][0] % 26)
+
     print(decodedMessage)
     print("The message says: ")
     for number in decodedMessage:
         if number != 0:
             print(chr(number + 96), end='')
-        if number == 0:
+        if number <= 0:
             print(" ", end='')
-            

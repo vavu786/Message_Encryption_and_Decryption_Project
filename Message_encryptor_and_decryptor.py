@@ -10,13 +10,9 @@ while conditionToEncode.lower() != "e" and conditionToEncode.lower() != "d":
     conditionToEncode = input("Please enter either a letter E or D: ")
 messageSplit = int(input("How many rows does the square encoding matrix have?: "))
 
-# Defines the encoding matrix
-encodingMatrix = np.empty([messageSplit, messageSplit], dtype='int')
 # Makes the values of the matrix equal to the user input
-for i in range(messageSplit):
-    for j in range(messageSplit):
-        valueE = int(input("Enter the value in row {} and column {} of the encoding matrix: ".format(i, j)))
-        encodingMatrix[i][j] = valueE
+encodingValues = input("Enter the values of the encoding matrix in one line: ")
+encodingMatrix = np.asarray(encodingValues.split(" "), dtype='int').reshape(messageSplit, messageSplit)
 
 if conditionToEncode.lower() == "d":
     # Defines the message matrix

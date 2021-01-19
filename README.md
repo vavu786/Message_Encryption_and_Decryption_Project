@@ -1,2 +1,2 @@
-# Message_Encryption_and_Decryption_Project
+# Science Fair: Message_Encryption_and_Decryption_Project
 Encrypts and decrypts messages using matrix multiplication. To encrypt, the message is first converted to numbers and split into small 1 x n matrices. Then, each one is multiplied by an encoding matrix and the small matrices are put back together to make the encoded string of numbers. To decode, the exact same thing is done but with the inverse of the encoding matrix.
